@@ -57,55 +57,21 @@ var eventName = [
   , `ended`
 ];
 
-var audioSample = createAudio('sample.mp3', (audio, data) => {
+var audioSample = createAudio('sample.mp3', (audio) => {
+  // console.log('成功了：', audio, data);
   document.querySelector('body').appendChild(audio);
   initAudioEvent(audio);
-  var p1 = audio.play();
-  console.log('p1:', p1);
-  setTimeout(() => {
-    console.log('p1:', p1);
-    audio.pause();
-    console.log('p1:', p1);
-  }, 2500);
-  setTimeout(() => {
-    audio.volume = 0.1;
-    audio.currentTime = 0;
-    var p2 = audio.play();
-    console.log('p2:', p2);
-  }, 4500);
+  audio.play();
 })
+console.log(audioSample);
 
-/**
- * 创建音频对象
- * @param {string} url 音频链接
- * @param {function} callback 音频加载完毕的回调函数
- * @return {object} 创建的音频对象
- */
 function createAudio(url, callback) {
   let audio = document.createElement('audio');
-  getAudio(url, (data) => {
-    audio.src = url;
-    callback && typeof callback === 'function' && callback(audio, data);
-  });
+  audio.src = url;
+  callback && typeof callback === 'function' && callback(audio);
   return audio;
 }
 
-/**
- * 异步请求音频
- * @param {string} url 音频链接
- * @param {function} callback 成功加载音频的回调函数
- */
-function getAudio(url, callback) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', url, false);
-  xhr.onload = () => {
-    callback && typeof callback === 'function' && callback(xhr.response);
-  };
-  xhr.onerror = () => {
-    console.error('请求资源错误：', url);
-  };
-  xhr.send();
-}
 
 /**
  * 给音频对象创建事件

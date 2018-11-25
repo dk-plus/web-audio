@@ -48,73 +48,75 @@ function createAudio(url, callback) {
 
 我们想要掌握audio，就要先掌握它的相关api，包括它的属性、方法以及事件监听。
 
-我们在浏览器的控制台输入`Audio.prototype`就能看到这些信息了，以下是我总结的一些相关信息，如有纰漏，请在issue里指出：
-
-```javascript
-/**
- * 函数
- * play()
- * pause()
- * 
- * 属性
- * loop
- * autoplay
- * preload
- * controlls
- * controllsList
- * src
- * currentSrc
- * currentTime
- * defaultMuted
- * muted
- * defaultPlaybackRate
- * disableRemotePlayback
- * mediaKeys
- * played
- * paused
- * volume 0-1
- * ended
- * duration 秒
- * 
- * 事件
- * onvolumechange
- * onratechange
- * ontimeupdate
- * onplay
- * onplaying
- * onpause
- * oncanplay
- * oncanplaythrough
- */
-```
+我们在浏览器的控制台输入`Audio.prototype`就能看到这些信息了。
 
 ### audio方法
 
 下面我们来看看一些音频常用的方法：
+- `load()`：重新加载音频
 - `play()`：播放
 - `pause()`：暂停
-
-以上两个方法其实没啥好说的，看名字就知道怎么用，值得一提的是调用`play()`方法时会返回一个状态为`pending`的`Promise`对象，调用完毕后状态就变为`resolved`，在播放状态下重复调用`play()`的时候音频并不会重新开始播放。
+- `getStartDate()`：返回一个新的Date对象，表示当前时间偏移量
+- `fastSeek()`：指定播放时间
+- `canPlayType()`：检查浏览器是否可以播放指定的音频类型
+- `addTextType()`：在音频中添加一个新的文本轨道
 
 ### audio属性
 
 我们在控制台看到的属性是非常多的，并且这些属性大多数都是对应着`getter`和`setter`函数的，下面总结了我所了解到的属性，欢迎提issue补充：
 
-- `loop`：循环。获取/改变音频是否循环
-- `autoplay`：自动播放。获取/改变音频是否自动播放
-- `preload`：自动加载。获取/改变音频是否自动加载
-- `controlls`
+- `preload`：`<boolean>` 自动加载。获取/改变音频是否自动加载
+- `networkState`：返回音频当前网络连接状态
+- `readyState`：返回音频当前的就绪状态
+- `crossOrigin`：设置或返回音频的CORS设置
+- `buffered`：`<object>` 返回表示音频已缓冲部分的TimeRanges对象
+- `loop`：`<boolean>` 循环。获取/改变音频是否循环
+- `autoplay`：`<boolean>` 自动播放。获取/改变音频是否自动播放
+- `controlls`：`<boolean>` 返回音频是否显示控件
+- `controller`：`<object>` 返回音频当前媒体控制器的MediaController对象
 - `controllsList`
-- `src`：资源。
-- `currentSrc`：当前播放源。
-- `currentTime`：当前时间。获取/改变音频当前播放时间
-- `defaultMuted`：默认静音。
-- `muted`：静音。获取/改变音频是否静音
-- `defaultPlaybackRate`
-- `disableRemotePlayback`
+- `mediaGroup`：`<int>` 设置或返回音频所属的组合
 - `mediaKeys`
-- `played`
-- `paused`：暂停。获取/改变音频是否暂停
-- `volume`：音量。获取/改变音量
-- `ended`：结束。获取音频是否结束
-- `duration`：时长。获取音频的长度，单位为秒。
+- `audioTracks`：`<object>` 返回表示可用音频轨道的AduioTrackList对象
+- `textTrack`：`<object>` 返回表示文本可以轨道的TextTrackList对象
+- `src`：`<string>` 资源。
+- `currentSrc`：`<string>` 当前播放源。
+- `played`：`<object>` 返回表示音频已播放部分的TimeRanges对象
+- `paused`：`<boolean>` 暂停。获取/改变音频是否暂停
+- `ended`：`<boolean>` 结束。获取音频是否结束
+- `volume`：`<int>` 音量。获取/改变音量，0-1
+- `defaultMuted`：`<boolean>` 默认静音。
+- `muted`：`<boolean>` 静音。获取/改变音频是否静音
+- `currentTime`：`<int>` 当前时间。获取/改变音频当前播放时间
+- `defaultPlaybackRate`：设置或返回默认播放速度
+- `playbackRate`：返回音频播放速度
+- `defaultPlaybackRate`：返回默认的播放速度
+- `disableRemotePlayback`
+- `seekable`：`<object>` 返回表示音频可寻址部分的TimeRanges对象
+- `seeking`：`<boolean>` 返回用户是否在音频中进行查找
+
+### audio事件
+
+我们了解到了audio对象拥有的属性，这些属性都是随着audio对象的状态变化联动的，而我们可以通过事件监听来获知这些对象属性的改变，目前总结出一些事件：
+
+* `onloadstart`：开始加载音频时
+* `ondurationchange`：音频时长变化时
+* `onloadedmetadata`：音频元数据加载后
+* `onloadeddata`：当前帧数据加载完成且还没有足够的数据播放下一帧音频时
+* `onwaiting`：播放下一帧而需要缓冲时
+* `onprogress`：下载指定的音频时
+* `oncanplay`：用户可以播放
+* `oncanplaythrough`：用户可以播放（无需停顿和缓冲时）
+* `onabort`：音频终止加载时
+* `onerror`：音频加载期间错误
+* `onstall`：在浏览器获取媒体数据，但媒体数据不可用时
+* `onsuspend`：在浏览器读取媒体数据终止时
+* `onemptied`：当前播放列表为空
+* `onplay`：播放
+* `onplaying`：播放中
+* `onpause`：暂停
+* `onseeking`：用户重新定位音频时
+* `onvolumechange`：音量变化
+* `onratechange`：音频播放速度变化时
+* `ontimeupdate`：音频播放位置改变，大概0.25秒一次触发
+* `onended`：结束
